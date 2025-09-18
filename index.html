@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>FunFact Game Show – Live Trivia</title>
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef6ff', 100: '#d9eaff', 200: '#bcd8ff', 300: '#8fbaff', 400: '#5c99ff',
+              500: '#347bff', 600: '#1f62f0', 700: '#174cbe', 800: '#153f97', 900: '#133777'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    :root { color-scheme: light dark; }
+    body { background:
+      radial-gradient(900px 600px at 10% -10%, rgba(52,123,255,.15), transparent 70%),
+      radial-gradient(800px 600px at 110% 10%, rgba(20,180,170,.12), transparent 70%),
+      linear-gradient(180deg, #0b1220, #0e1628) fixed; }
+    .glass { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12); backdrop-filter: blur(10px); }
+    .card { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+    .badge { background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.18); }
+    .hidden-el { display: none; }
+  </style>
+</head>
+<body class="min-h-screen text-white selection:bg-brand-400/30">
+  <div class="max-w-6xl mx-auto p-4 sm:p-6">
+    <header class="flex items-center justify-between gap-4 mb-6">
+      <div class="flex items-center gap-3">
+        <div class="size-10 rounded-xl bg-brand-500/20 grid place-items-center border border-brand-400/30">
+          <span class="font-black text-brand-300">FF</span>
+        </div>
+        <div>
+          <h1 class="text-xl sm:text-2xl font-bold tracking-tight">FunFact Game Show – Live Trivia</h1>
+          <p class="text-white/60 text-sm">Audience + At‑Home participation • No app install</p>
+        </div>
+      </div>
+      <div class="flex gap-2">
+        <button id="btnHost" class="px-3 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 active:scale-[.98] transition">Host a Game</button>
+        <button id="btnPlayer" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 active:scale-[.98] transition">Join as Player</button>
+      </div>
+    </header>
+
+    <!-- Landing / Mode Switcher -->
+    <section id="landing" class="card rounded-2xl p-5">
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="space-y-4">
+          <h2 class="text-lg font-semibold">Join a Game</h2>
+          <div class="grid sm:grid-cols-3 gap-2 items-center">
+            <label class="text-sm text-white/70 sm:col-span-1">Enter Code</label>
+            <input id="joinCodeInput" class="sm:col-span-2 rounded-xl bg-white/10 border border-white/15 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-400" placeholder="e.g. WHISLR" maxlength="8" />
+          </div>
+          <div class="grid sm:grid-cols-3 gap-2 items-center">
+            <label class="text-sm text-white/70 sm:col-span-1">Your Name</label>
+            <input id="playerNameInput" class="sm:col-span-2 rounded-xl bg-white/10 border border-white/15 px-3 py-2" placeholder="e.g. Alex" maxlength="20" />
+          </div>
+          <button id="btnJoin" class="w-full sm:w-auto px-4 py-2 rounded-xl bg-brand-500 hover:bg-brand-600">Join Game</button>
+          <p class="text-xs text-white/50">Tip: Scan a QR code to land here with the code pre‑filled.</p>
+        </div>
+        <div class="space-y-4">
+          <h2 class="text-lg font-semibold">Host a Game</h2>
+          <p class="text-white/70 text-sm">Create a game, add questions, and run rounds. Players join at <span class="font-semibold">this URL</span> with your code.</p>
+          <button id="btnCreateGame" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15">Create New Game</button>
+          <div class="text-xs text-white/50">No app, no logins. Uses anonymous auth.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Host Dashboard -->
+    <section id="host" class="hidden-el mt-6 grid md:grid-cols-3 gap-6">
+      <div class="md:col-span-2 card rounded-2xl p-5">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="text-sm text-white/60">Game Code</div>
+            <div class="text-2xl font-bold tracking-widest" id="hostCode">— — — —</div>
+          </div>
+          <div class="flex gap-2">
+            <button id="btnCopyJoin" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20">Copy Join Link</button>
+            <button id="btnEndGame" class="px-3 py-2 rounded-xl bg-red-500/80 hover:bg-red-500">End Game</button>
+          </div>
+        </div>
+
+        <div class="mt-4 grid sm:grid-cols-2 gap-4">
+          <div class="card rounded-xl p-4">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="font-semibold">Questions</h3>
+              <button id="btnAddQ" class="px-3 py-1.5 rounded-lg bg-brand-500 hover:bg-brand-600">Add</button>
+            </div>
+            <ol id="qList" class="space-y-2 text-sm"></ol>
+          </div>
+          <div class="card rounded-xl p-4">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="font-semibold">Players <span id="playerCount" class="text-white/60"></span></h3>
+              <button id="btnResetScores" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20">Reset Scores</button>
+            </div>
+            <ul id="playersList" class="space-y-2 text-sm"></ul>
+          </div>
+        </div>
+
+        <div class="mt-4 card rounded-xl p-4">
+          <div class="flex items-center justify-between gap-2">
+            <div>
+              <div class="text-sm text-white/60">Current Question</div>
+              <div id="currentQLabel" class="font-semibold">—</div>
+            </div>
+            <div class="flex items-center gap-2">
+              <label class="text-sm text-white/70">Time (s)</label>
+              <input id="timeLimitInput" type="number" class="w-20 rounded-lg bg-white/10 border border-white/15 px-2 py-1" value="20" min="5" max="120" />
+              <button id="btnSendQ" class="px-4 py-2 rounded-xl bg-emerald-500/80 hover:bg-emerald-500">Send Question</button>
+              <button id="btnReveal" class="px-4 py-2 rounded-xl bg-amber-500/80 hover:bg-amber-500">Reveal & Score</button>
+            </div>
+          </div>
+          <div class="mt-3 text-sm text-white/70 flex items-center gap-3">
+            <div>Answers in: <span id="answersIn" class="font-semibold text-white">0</span></div>
+            <div>Time left: <span id="hostCountdown" class="font-mono"></span></div>
+          </div>
+          <div id="answerBreakdown" class="mt-4 grid sm:grid-cols-2 lg:grid-cols-4 gap-3"></div>
+        </div>
+      </div>
+
+      <aside class="card rounded-2xl p-5">
+        <h3 class="font-semibold">Leaderboard</h3>
+        <ol id="leaderboard" class="mt-3 space-y-2"></ol>
+      </aside>
+    </section>
+
+    <!-- Player View -->
+    <section id="player" class="hidden-el mt-6">
+      <div class="card rounded-2xl p-5">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="text-sm text-white/60">You are</div>
+            <div class="text-xl font-semibold" id="playerNameLabel">—</div>
+          </div>
+          <div>
+            <div class="text-sm text-white/60">Game Code</div>
+            <div class="text-xl font-mono tracking-widest" id="playerCodeLabel">— — — —</div>
+          </div>
+        </div>
+        <div class="mt-4">
+          <div id="waitView" class="text-white/70">Waiting for the host to start a question…</div>
+          <div id="qView" class="hidden-el">
+            <div class="text-sm text-white/60">Time left: <span id="playerCountdown" class="font-mono"></span></div>
+            <h2 id="qText" class="mt-2 text-lg font-semibold"></h2>
+            <div id="options" class="mt-3 grid sm:grid-cols-2 gap-3"></div>
+            <div id="afterSubmit" class="mt-3 text-sm hidden-el"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 card rounded-2xl p-5">
+        <h3 class="font-semibold">Live Leaderboard</h3>
+        <ol id="playerLeaderboard" class="mt-3 space-y-2"></ol>
+      </div>
+    </section>
+
+    <!-- Modal: Add/Edit Question -->
+    <dialog id="qModal" class="rounded-2xl p-0 w-full max-w-xl bg-[#0f172a] text-white border border-white/15">
+      <form method="dialog">
+        <div class="p-5 border-b border-white/10 flex items-center justify-between">
+          <h3 class="font-semibold">Add Question</h3>
+          <button id="closeModal" class="px-2 py-1 rounded-lg bg-white/10">✕</button>
+        </div>
+      </form>
+      <div class="p-5 space-y-3">
+        <label class="block text-sm">Question
+          <textarea id="modalQText" class="mt-1 w-full rounded-xl bg-white/10 border border-white/15 px-3 py-2" rows="2" placeholder="e.g. What year did the Winter Olympics come to Whistler?"></textarea>
+        </label>
+        <div class="grid sm:grid-cols-2 gap-3">
+          <label class="block text-sm">Option A
+            <input id="opt0" class="mt-1 w-full rounded-xl bg-white/10 border border-white/15 px-3 py-2" />
+          </label>
+          <label class="block text-sm">Option B
+            <input id="opt1" class="mt-1 w-full rounded-xl bg-white/10 border border-white/15 px-3 py-2" />
+          </label>
+          <label class="block text-sm">Option C
+            <input id="opt2" class="mt-1 w-full rounded-xl bg-white/10 border border-white/15 px-3 py-2" />
+          </label>
+          <label class="block text-sm">Option D
+            <input id="opt3" class="mt-1 w-full rounded-xl bg-white/10 border border-white/15 px-3 py-2" />
+          </label>
+        </div>
+        <label class="block text-sm">Correct Answer
+          <select id="correctIdx" class="mt-1 w-full rounded-xl bg-white/10 border border-white/15 px-3 py-2">
+            <option value="0">A</option>
+            <option value="1">B</option>
+            <option value="2">C</option>
+            <option value="3">D</option>
+          </select>
+        </label>
+        <div class="flex justify-end gap-2 pt-2">
+          <button id="saveQ" class="px-4 py-2 rounded-xl bg-brand-500 hover:bg-brand-600">Save</button>
+        </div>
+      </div>
+    </dialog>
+
+    <footer class="mt-10 text-center text-xs text-white/50">MVP demo • Not production‑hardened. Consider Cloud Functions for scoring in production.</footer>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    // === 1) CONFIG ===
+    const firebaseConfig = {
+      apiKey: "AIzaSyBHNfZuAhbIuZLYMY-41-Jhv4mKW88ylkI",
+      authDomain: "gameshow-1cb77.firebaseapp.com",
+      projectId: "gameshow-1cb77",
+      storageBucket: "gameshow-1cb77.firebasestorage.app",
+      messagingSenderId: "683887962433",
+      appId: "1:683887962433:web:d4b0a4b7c4053c95af19c0",
+      measurementId: "G-WFVPTC3CSP"
+    };
+
+    // === 2) INIT ===
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // Anonymous sign-in (no prompts)
+    auth.signInAnonymously().catch(console.error);
+
+    // === 3) UTIL ===
+    const $ = (id) => document.getElementById(id);
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const genCode = () => {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      let out='';
+      for (let i=0;i<6;i++) out += chars[Math.floor(Math.random()*chars.length)];
+      return out;
+    };
+
+    const nowTs = () => firebase.firestore.Timestamp.now();
+
+    const copy = async (text) => {
+      try { await navigator.clipboard.writeText(text); } catch {}
+    };
+
+    const qDocRef = (gameId, qid) => db.collection('games').doc(gameId).collection('questions').doc(qid);
+    const playersCol = (gameId) => db.collection('games').doc(gameId).collection('players');
+
+    // Global state
+    let currentUser = null;
+    let mode = 'landing'; // 'host' | 'player'
+    let gameId = null; // firestore game doc id
+    let gameUnsub = null, qUnsub = null, playersUnsub = null, lbUnsub = null, answersUnsub = null;
+    let currentQuestion = null;
+    let countdownInt = null;
+
+    auth.onAuthStateChanged(u => { currentUser = u; });
+
+    // === 4) UI HELPERS ===
+    function show(id) { $(id).classList.remove('hidden-el'); }
+    function hide(id) { $(id).classList.add('hidden-el'); }
+
+    function setMode(newMode) {
+      mode = newMode;
+      hide('landing'); hide('host'); hide('player');
+      if (newMode==='host') show('host');
+      else if (newMode==='player') show('player');
+      else show('landing');
+    }
+
+    function renderLeaderboard(list, elId) {
+      list.sort((a,b)=> (b.score||0) - (a.score||0));
+      const ol = $(elId); ol.innerHTML = '';
+      list.forEach((p,i)=>{
+        const li = document.createElement('li');
+        li.className = 'flex items-center justify-between gap-3 rounded-xl bg-white/5 px-3 py-2';
+        li.innerHTML = `<div class="flex items-center gap-2"><span class="badge rounded-lg px-2 py-0.5 text-xs">#${i+1}</span><span class="font-medium">${escapeHtml(p.name||'Player')}</span></div><div class="font-mono">${p.score||0}</div>`;
+        ol.appendChild(li);
+      });
+    }
+
+    function escapeHtml(s){
+      return s?.replace(/[&<>"]/g, c=> ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])) || '';
+    }
+
+    function clearCountdown(ids){
+      if (countdownInt) clearInterval(countdownInt);
+      ids.forEach(id=> $(id).textContent = '');
+    }
+
+    function startCountdown(untilTs, ids){
+      clearCountdown(ids);
+      const until = untilTs?.toDate?.() || new Date(untilTs);
+      countdownInt = setInterval(()=>{
+        const diff = Math.max(0, until - new Date());
+        const s = Math.floor(diff/1000);
+        const m = Math.floor(s/60);
+        const rem = s%60;
+        ids.forEach(id => $(id).textContent = `${m}:${pad(rem)}`);
+        if (diff<=0) clearInterval(countdownInt);
+      }, 250);
+    }
+
+    // === 5) LANDING ===
+    $('btnHost').onclick = ()=> setMode('host');
+    $('btnPlayer').onclick = ()=> setMode('player');
+
+    $('btnCreateGame').onclick = async ()=>{
+      const code = genCode();
+      const game = await db.collection('games').add({
+        code,
+        status: 'lobby', // lobby | active | ended
+        createdAt: nowTs(),
+        currentQId: null,
+        dueAt: null,
+        reveal: false
+      });
+      gameId = game.id;
+      $('hostCode').textContent = code;
+      setMode('host');
+      hostListen(game.id);
+    };
+
+    $('btnJoin').onclick = async ()=>{
+      const code = $('joinCodeInput').value.trim().toUpperCase();
+      const name = $('playerNameInput').value.trim().slice(0,20) || 'Player';
+      if (!code) return alert('Enter a game code');
+      // find game by code & not ended
+      const q = await db.collection('games').where('code','==',code).where('status','in',['lobby','active']).limit(1).get();
+      if (q.empty) return alert('Game not found or already ended');
+      const doc = q.docs[0];
+      gameId = doc.id;
+      $('playerNameLabel').textContent = name;
+      $('playerCodeLabel').textContent = code;
+      setMode('player');
+      // register player (id = auth uid)
+      await playersCol(gameId).doc(currentUser.uid).set({
+        name, score: 0, joinedAt: nowTs()
+      }, { merge: true });
+      playerListen(gameId);
+    };
+
+    // === 6) HOST LOGIC ===
+    function hostListen(gid){
+      // Game doc
+      if (gameUnsub) gameUnsub();
+      gameUnsub = db.collection('games').doc(gid).onSnapshot(snap=>{
+        const g = snap.data();
+        $('hostCode').textContent = g.code;
+        $('currentQLabel').textContent = g.currentQId || '—';
+        if (g.dueAt) startCountdown(g.dueAt, ['hostCountdown']); else clearCountdown(['hostCountdown']);
+        if (g.currentQId) renderAnswerBreakdown(gid, g.currentQId);
+      });
+
+      // Players
+      if (playersUnsub) playersUnsub();
+      playersUnsub = playersCol(gid).onSnapshot(snap=>{
+        const list = [];
+        const ul = $('playersList'); ul.innerHTML='';
+        snap.forEach(d=> list.push({id:d.id, ...d.data()}));
+        $('playerCount').textContent = `(${list.length})`;
+        list.forEach(p=>{
+          const li = document.createElement('li');
+          li.className = 'flex items-center justify-between gap-3 rounded-xl bg-white/5 px-3 py-2';
+          li.innerHTML = `<div>${escapeHtml(p.name||'Player')}</div><div class="text-white/70 font-mono">${p.score||0}</div>`;
+          ul.appendChild(li);
+        });
+        renderLeaderboard(list, 'leaderboard');
+      });
+
+      // Questions list
+      if (qUnsub) qUnsub();
+      qUnsub = db.collection('games').doc(gid).collection('questions').orderBy('index').onSnapshot(snap=>{
+        const ol = $('qList'); ol.innerHTML='';
+        snap.forEach(d=>{
+          const q = d.data();
+          const li = document.createElement('li');
+          li.className = 'rounded-lg bg-white/5 px-3 py-2 flex items-center justify-between';
+          li.innerHTML = `<div><span class="text-white/60 mr-2">Q${q.index+1}</span>${escapeHtml(q.text)}</div>`;
+          ol.appendChild(li);
+        });
+      });
+    }
+
+    function renderAnswerBreakdown(gid, qid){
+      // live counts per option
+      if (answersUnsub) answersUnsub();
+      answersUnsub = qDocRef(gid, qid).collection('answers').onSnapshot(snap=>{
+        const counts = [0,0,0,0];
+        snap.forEach(d=>{ const a=d.data(); if (typeof a.choice==='number') counts[a.choice]++; });
+        $('answersIn').textContent = snap.size;
+        const box = $('answerBreakdown');
+        box.innerHTML = '';
+        counts.forEach((c,i)=>{
+          const div = document.createElement('div');
+          div.className = 'rounded-xl bg-white/5 px-3 py-2';
+          div.innerHTML = `<div class="text-sm text-white/70">Option ${String.fromCharCode(65+i)}</div><div class="text-2xl font-bold">${c}</div>`;
+          box.appendChild(div);
+        });
+      });
+    }
+
+    $('btnCopyJoin').onclick = async ()=>{
+      const code = $('hostCode').textContent;
+      await copy(location.href.split('?')[0] + `?code=${code}`);
+      alert('Join link copied');
+    };
+
+    $('btnAddQ').onclick = ()=>{
+      $('modalQText').value = '';
+      for (let i=0;i<4;i++) $(`opt${i}`).value = '';
+      $('correctIdx').value = '0';
+      $('qModal').showModal();
+    };
+    $('closeModal').onclick = ()=> $('qModal').close();
+
+    $('saveQ').onclick = async ()=>{
+      if (!gameId) return;
+      const text = $('modalQText').value.trim();
+      const options = [0,1,2,3].map(i=> $(`opt${i}`).value.trim()).filter(Boolean);
+      const correctIndex = parseInt($('correctIdx').value,10);
+      if (!text || options.length<2) return alert('Enter a question and at least two options');
+      const col = db.collection('games').doc(gameId).collection('questions');
+      const idxSnap = await col.get();
+      const index = idxSnap.size; // append
+      const doc = await col.add({ text, options, correctIndex, index, createdAt: nowTs() });
+      $('qModal').close();
+      $('currentQLabel').textContent = doc.id;
+    };
+
+    $('btnSendQ').onclick = async ()=>{
+      const gid = gameId; if (!gid) return;
+      // choose next question (by index > current)
+      const gSnap = await db.collection('games').doc(gid).get();
+      const g = gSnap.data();
+      const qSnap = await db.collection('games').doc(gid).collection('questions').orderBy('index').get();
+      if (qSnap.empty) return alert('Add questions first');
+      let next = null;
+      if (!g.currentQId){ next = qSnap.docs[0]; }
+      else {
+        let foundIdx = qSnap.docs.findIndex(d=> d.id===g.currentQId);
+        next = qSnap.docs[foundIdx+1] || qSnap.docs[0];
+      }
+      const dueSeconds = Math.max(5, parseInt($('timeLimitInput').value,10)||20);
+      const dueAt = firebase.firestore.Timestamp.fromDate(new Date(Date.now() + dueSeconds*1000));
+      await db.collection('games').doc(gid).update({ currentQId: next.id, dueAt, reveal:false, status: 'active' });
+    };
+
+    $('btnReveal').onclick = async ()=>{
+      const gid = gameId; if (!gid) return;
+      const gRef = db.collection('games').doc(gid);
+      const g = (await gRef.get()).data();
+      if (!g.currentQId) return;
+      await gRef.update({ reveal: true });
+
+      // Score: for demo, host client tallies answers and updates player scores.
+      const qRef = qDocRef(gid, g.currentQId);
+      const q = (await qRef.get()).data();
+      const answers = await qRef.collection('answers').get();
+      const batch = db.batch();
+      const scores = {};
+      answers.forEach(a=>{
+        const ad = a.data();
+        if (ad.choice === q.correctIndex) {
+          scores[ad.playerId] = (scores[ad.playerId]||0) + 100; // 100 pts per correct
+        }
+      });
+      const players = await playersCol(gid).get();
+      players.forEach(p=>{
+        const inc = scores[p.id]||0;
+        if (inc>0) batch.update(playersCol(gid).doc(p.id), { score: firebase.firestore.FieldValue.increment(inc) });
+      });
+      await batch.commit();
+    };
+
+    $('btnResetScores').onclick = async ()=>{
+      if (!gameId) return;
+      const snap = await playersCol(gameId).get();
+      const batch = db.batch();
+      snap.forEach(d=> batch.update(d.ref, { score: 0 }));
+      await batch.commit();
+    };
+
+    $('btnEndGame').onclick = async ()=>{
+      if (!gameId) return;
+      await db.collection('games').doc(gameId).update({ status: 'ended', currentQId: null, dueAt: null, reveal:false });
+      alert('Game ended');
+    };
+
+    // === 7) PLAYER LOGIC ===
+    function playerListen(gid){
+      // live leaderboard
+      if (lbUnsub) lbUnsub();
+      lbUnsub = playersCol(gid).onSnapshot(snap=>{
+        const list = []; snap.forEach(d=> list.push(d.data()));
+        renderLeaderboard(list, 'playerLeaderboard');
+      });
+
+      // game doc listener
+      if (gameUnsub) gameUnsub();
+      gameUnsub = db.collection('games').doc(gid).onSnapshot(async snap=>{
+        const g = snap.data();
+        if (!g.currentQId){ hide('qView'); show('waitView'); return; }
+        show('qView'); hide('waitView');
+        startCountdown(g.dueAt, ['playerCountdown']);
+        const qSnap = await qDocRef(gid, g.currentQId).get();
+        currentQuestion = { id: qSnap.id, ...qSnap.data() };
+        $('qText').textContent = currentQuestion.text;
+        renderOptions(gid, currentQuestion, g);
+        if (g.reveal) showReveal(currentQuestion);
+      });
+    }
+
+    async function renderOptions(gid, q, g){
+      const box = $('options'); box.innerHTML='';
+      const ansRef = qDocRef(gid, q.id).collection('answers').doc(currentUser.uid);
+      const existing = await ansRef.get();
+      const locked = existing.exists;
+
+      q.options.forEach((opt, i)=>{
+        const btn = document.createElement('button');
+        btn.className = 'w-full text-left rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 px-3 py-2 disabled:opacity-60';
+        btn.textContent = `${String.fromCharCode(65+i)}. ${opt}`;
+        btn.disabled = locked;
+        btn.onclick = async ()=>{
+          const due = g.dueAt?.toDate?.() || new Date();
+          if (new Date() > due) return alert('Time up!');
+          await ansRef.set({
+            playerId: currentUser.uid,
+            choice: i,
+            submittedAt: nowTs()
+          }, { merge: true });
+          $('afterSubmit').classList.remove('hidden-el');
+          $('afterSubmit').textContent = 'Answer submitted! You can change until time is up.';
+        };
+        box.appendChild(btn);
+      });
+    }
+
+    function showReveal(q){
+      const msg = $('afterSubmit');
+      msg.classList.remove('hidden-el');
+      msg.textContent = `Answer revealed: ${String.fromCharCode(65+q.correctIndex)} (${q.options[q.correctIndex]})`;
+    }
+
+    // === 8) QUERY PARAMS (prefill code) ===
+    (function initFromQuery(){
+      const params = new URLSearchParams(location.search);
+      const code = params.get('code');
+      if (code) { $('joinCodeInput').value = code.toUpperCase(); }
+    })();
+  </script>
+
+  <!-- Firestore Security Rules (paste into your Firebase Console > Firestore Rules)
+  rules_version = '2';
+  service cloud.firestore {
+    match /databases/{database}/documents {
+      function authed() { return request.auth != null; }
+
+      match /games/{gameId} {
+        allow read: if true; // public
+        allow write: if authed(); // host & clients can update in this MVP
+
+        match /players/{playerId} {
+          allow read: if true;
+          allow write: if authed() && request.auth.uid == playerId;
+        }
+
+        match /questions/{qId} {
+          allow read: if true;
+          allow write: if authed();
+
+          match /answers/{answerId} {
+            allow read: if true;
+            allow write: if authed() && request.auth.uid == answerId; // player can write their own answer
+          }
+        }
+      }
+    }
+  }
+  -->
+</body>
+</html>
