@@ -45,39 +45,76 @@
         </div>
       </div>
       <div class="flex gap-2">
-        <button id="btnHost" class="px-3 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 active:scale-[.98] transition">Host a Game</button>
-        <button id="btnPlayer" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 active:scale-[.98] transition">Join as Player</button>
+        <button id="btnQuickHost" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 active:scale-[.98] transition text-sm">Quick Host</button>
+        <button id="btnPlayer" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 active:scale-[.98] transition text-sm">Quick Join</button>
       </div>
     </header>
 
     <!-- Landing / Mode Switcher -->
-    <section id="landing" class="card rounded-2xl p-5">
-      <div class="grid md:grid-cols-2 gap-6">
-        <div class="space-y-4">
-          <h2 class="text-lg font-semibold">Join a Game</h2>
-          <div class="grid sm:grid-cols-3 gap-2 items-center">
-            <label class="text-sm text-white/70 sm:col-span-1">Enter Code</label>
-            <input id="joinCodeInput" class="sm:col-span-2 rounded-xl bg-white/10 border border-white/15 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-400" placeholder="e.g. WHISLR" maxlength="8" />
+    <section id="landing" class="card rounded-2xl p-8">
+      <div class="text-center mb-8">
+        <h2 class="text-2xl font-bold mb-2">Welcome to FunFact Game Show</h2>
+        <p class="text-white/70">Choose how you'd like to participate</p>
+      </div>
+      
+      <div class="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        <!-- Join a Game -->
+        <div class="card rounded-2xl p-6 text-center hover:bg-white/5 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-brand-500/20 cursor-pointer group">
+          <div class="mb-4">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-brand-500/20 flex items-center justify-center group-hover:bg-brand-500/30 transition-colors duration-300">
+              <span class="text-2xl group-hover:scale-110 transition-transform duration-300">🎮</span>
+            </div>
+            <h3 class="text-xl font-semibold mb-2 group-hover:text-brand-300 transition-colors duration-300">Join a Game</h3>
+            <p class="text-white/70 text-sm mb-6 group-hover:text-white/80 transition-colors duration-300">Enter a game code to join an existing trivia game</p>
           </div>
-          <div class="grid sm:grid-cols-3 gap-2 items-center">
-            <label class="text-sm text-white/70 sm:col-span-1">Your Name</label>
-            <input id="playerNameInput" class="sm:col-span-2 rounded-xl bg-white/10 border border-white/15 px-3 py-2" placeholder="e.g. Alex" maxlength="20" />
+          
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm text-white/70 mb-2 text-left">Enter Game Code</label>
+              <input id="joinCodeInput" class="w-full rounded-xl bg-white/10 border border-white/15 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-400 text-center font-mono tracking-widest" placeholder="e.g. WHISLR" maxlength="8" />
+            </div>
+            <div>
+              <label class="block text-sm text-white/70 mb-2 text-left">Your Name</label>
+              <input id="playerNameInput" class="w-full rounded-xl bg-white/10 border border-white/15 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-400" placeholder="e.g. Alex" maxlength="20" />
+            </div>
+            <button id="btnJoin" class="w-full px-6 py-3 rounded-xl bg-brand-500 hover:bg-brand-600 font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-brand-500/30">Join Game</button>
           </div>
-          <button id="btnJoin" class="w-full sm:w-auto px-4 py-2 rounded-xl bg-brand-500 hover:bg-brand-600">Join Game</button>
-          <p class="text-xs text-white/50">Tip: Scan a QR code to land here with the code pre‑filled.</p>
         </div>
-        <div class="space-y-4">
-          <h2 class="text-lg font-semibold">Host a Game</h2>
-          <p class="text-white/70 text-sm">Create a game, add questions, and run rounds. Players join at <span class="font-semibold">this URL</span> with your code.</p>
-          <button id="btnCreateGame" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15">Create New Game</button>
-          <div class="text-xs text-white/50">No app, no logins. Uses anonymous auth.</div>
+
+        <!-- Start a Game -->
+        <div class="card rounded-2xl p-6 text-center hover:bg-white/5 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-emerald-500/20 cursor-pointer group">
+          <div class="mb-4">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-500/30 transition-colors duration-300">
+              <span class="text-2xl group-hover:scale-110 transition-transform duration-300">🎯</span>
+            </div>
+            <h3 class="text-xl font-semibold mb-2 group-hover:text-emerald-300 transition-colors duration-300">Start a Game</h3>
+            <p class="text-white/70 text-sm mb-6 group-hover:text-white/80 transition-colors duration-300">Create your own trivia game and invite players to join</p>
+          </div>
+          
+          <div class="space-y-4">
+            <div class="text-left">
+              <h4 class="font-medium mb-2">What you can do:</h4>
+              <ul class="text-sm text-white/70 space-y-1">
+                <li>• Add custom questions</li>
+                <li>• Set time limits</li>
+                <li>• Track live scores</li>
+                <li>• Share game code</li>
+              </ul>
+            </div>
+            <button id="btnHost" class="w-full px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-emerald-500/30">Start Game</button>
+          </div>
         </div>
+      </div>
+      
+      <div class="text-center mt-6">
+        <p class="text-xs text-white/50">No app required • No signup needed • Works on any device</p>
       </div>
     </section>
 
     <!-- Host Dashboard -->
-    <section id="host" class="hidden-el mt-6 grid md:grid-cols-3 gap-6">
-      <div class="md:col-span-2 card rounded-2xl p-5">
+    <section id="host" class="hidden-el mt-6">
+      <!-- Game Code Section - Always visible when hosting -->
+      <div class="card rounded-2xl p-5 mb-6">
         <div class="flex items-center justify-between">
           <div>
             <div class="text-sm text-white/60">Game Code</div>
@@ -88,49 +125,86 @@
             <button id="btnEndGame" class="px-3 py-2 rounded-xl bg-red-500/80 hover:bg-red-500">End Game</button>
           </div>
         </div>
-
-        <div class="mt-4 grid sm:grid-cols-2 gap-4">
-          <div class="card rounded-xl p-4">
-            <div class="flex items-center justify-between mb-2">
-              <h3 class="font-semibold">Questions</h3>
-              <button id="btnAddQ" class="px-3 py-1.5 rounded-lg bg-brand-500 hover:bg-brand-600">Add</button>
-            </div>
-            <ol id="qList" class="space-y-2 text-sm"></ol>
-          </div>
-          <div class="card rounded-xl p-4">
-            <div class="flex items-center justify-between mb-2">
-              <h3 class="font-semibold">Players <span id="playerCount" class="text-white/60"></span></h3>
-              <button id="btnResetScores" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20">Reset Scores</button>
-            </div>
-            <ul id="playersList" class="space-y-2 text-sm"></ul>
-          </div>
-        </div>
-
-        <div class="mt-4 card rounded-xl p-4">
-          <div class="flex items-center justify-between gap-2">
-            <div>
-              <div class="text-sm text-white/60">Current Question</div>
-              <div id="currentQLabel" class="font-semibold">—</div>
-            </div>
-            <div class="flex items-center gap-2">
-              <label class="text-sm text-white/70">Time (s)</label>
-              <input id="timeLimitInput" type="number" class="w-20 rounded-lg bg-white/10 border border-white/15 px-2 py-1" value="20" min="5" max="120" />
-              <button id="btnSendQ" class="px-4 py-2 rounded-xl bg-emerald-500/80 hover:bg-emerald-500">Send Question</button>
-              <button id="btnReveal" class="px-4 py-2 rounded-xl bg-amber-500/80 hover:bg-amber-500">Reveal & Score</button>
-            </div>
-          </div>
-          <div class="mt-3 text-sm text-white/70 flex items-center gap-3">
-            <div>Answers in: <span id="answersIn" class="font-semibold text-white">0</span></div>
-            <div>Time left: <span id="hostCountdown" class="font-mono"></span></div>
-          </div>
-          <div id="answerBreakdown" class="mt-4 grid sm:grid-cols-2 lg:grid-cols-4 gap-3"></div>
-        </div>
       </div>
 
-      <aside class="card rounded-2xl p-5">
-        <h3 class="font-semibold">Leaderboard</h3>
-        <ol id="leaderboard" class="mt-3 space-y-2"></ol>
-      </aside>
+      <!-- Host Modules - Hidden initially -->
+      <div id="hostModules" class="hidden-el">
+        <div class="grid md:grid-cols-3 gap-6">
+          <div class="md:col-span-2 card rounded-2xl p-5">
+            <div class="mt-4 grid sm:grid-cols-3 gap-4">
+            <div class="card rounded-xl p-4">
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="font-semibold">Questions</h3>
+                <button id="btnAddQ" class="px-3 py-1.5 rounded-lg bg-brand-500 hover:bg-brand-600">Add</button>
+              </div>
+              <ol id="qList" class="space-y-2 text-sm"></ol>
+            </div>
+            
+            <!-- Timer Module -->
+            <div class="card rounded-xl p-4">
+              <div class="text-center">
+                <h3 class="font-semibold mb-3">Timer Settings</h3>
+                <div class="space-y-3">
+                  <div>
+                    <label class="block text-sm text-white/70 mb-2">Time Limit (s)</label>
+                    <input id="timeLimitInput" type="number" class="w-full rounded-lg bg-white/10 border border-white/15 px-3 py-2 text-center" value="20" min="5" max="120" />
+                  </div>
+                  <div class="text-sm text-white/60">Set the duration for each question</div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="card rounded-xl p-4">
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="font-semibold">Players <span id="playerCount" class="text-white/60"></span></h3>
+                <button id="btnResetScores" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20">Reset Scores</button>
+              </div>
+              <ul id="playersList" class="space-y-2 text-sm"></ul>
+            </div>
+          </div>
+
+          <div class="mt-4 card rounded-xl p-4">
+            <!-- No Question State -->
+            <div id="noQuestionState" class="text-center py-8">
+              <div class="mb-4">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-emerald-500/20 flex items-center justify-center">
+                  <span class="text-2xl">🎯</span>
+                </div>
+                <h3 class="text-lg font-semibold mb-2">Ready to Start?</h3>
+                <p class="text-white/70 text-sm mb-6">Add some questions first, then start your trivia game</p>
+              </div>
+              <button id="btnStartGame" class="px-6 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-600 font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-emerald-500/30">
+                Start Game
+              </button>
+            </div>
+
+            <!-- Active Question State -->
+            <div id="activeQuestionState" class="hidden-el">
+              <div class="flex items-center justify-between gap-2">
+                <div>
+                  <div class="text-sm text-white/60">Current Question</div>
+                  <div id="currentQLabel" class="font-semibold">—</div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button id="btnSendQ" class="px-4 py-2 rounded-xl bg-emerald-500/80 hover:bg-emerald-500">Start Next Question</button>
+                  <button id="btnReveal" class="px-4 py-2 rounded-xl bg-amber-500/80 hover:bg-amber-500">Reveal & Score</button>
+                </div>
+              </div>
+              <div class="mt-3 text-sm text-white/70 flex items-center gap-3">
+                <div>Answers in: <span id="answersIn" class="font-semibold text-white">0</span></div>
+                <div>Time left: <span id="hostCountdown" class="font-mono font-semibold text-brand-300"></span></div>
+              </div>
+              <div id="answerBreakdown" class="mt-4 grid sm:grid-cols-2 lg:grid-cols-4 gap-3"></div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="card rounded-2xl p-5">
+          <h3 class="font-semibold">Leaderboard</h3>
+          <ol id="leaderboard" class="mt-3 space-y-2"></ol>
+        </aside>
+        </div>
+      </div>
     </section>
 
     <!-- Player View -->
@@ -190,15 +264,15 @@
           </label>
         </div>
         <label class="block text-sm">Correct Answer
-          <select id="correctIdx" class="mt-1 w-full rounded-xl bg-white/10 border border-white/15 px-3 py-2">
-            <option value="0">A</option>
-            <option value="1">B</option>
-            <option value="2">C</option>
-            <option value="3">D</option>
+          <select id="correctIdx" class="mt-1 w-full rounded-xl bg-white/10 border border-white/15 px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-brand-400">
+            <option value="0" class="bg-gray-800 text-white">A</option>
+            <option value="1" class="bg-gray-800 text-white">B</option>
+            <option value="2" class="bg-gray-800 text-white">C</option>
+            <option value="3" class="bg-gray-800 text-white">D</option>
           </select>
         </label>
         <div class="flex justify-end gap-2 pt-2">
-          <button id="saveQ" class="px-4 py-2 rounded-xl bg-brand-500 hover:bg-brand-600">Save</button>
+          <button id="saveQ" class="px-4 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 active:scale-95 transition-transform">Save</button>
         </div>
       </div>
     </dialog>
@@ -307,24 +381,44 @@
     }
 
     // === 5) LANDING ===
-    $('btnHost').onclick = ()=> setMode('host');
+    // Shared function for hosting
+    const startHosting = async (buttonElement) => {
+      // Show loading state
+      const originalText = buttonElement.textContent;
+      buttonElement.textContent = 'Creating Game...';
+      buttonElement.disabled = true;
+      
+      try {
+        // Automatically create a new game when hosting
+        const code = genCode();
+        const game = await db.collection('games').add({
+          code,
+          status: 'lobby', // lobby | active | ended
+          createdAt: nowTs(),
+          currentQId: null,
+          dueAt: null,
+          reveal: false
+        });
+        gameId = game.id;
+        $('hostCode').textContent = code;
+        setMode('host');
+        hostListen(game.id);
+        // Show the host modules after game creation
+        show('hostModules');
+      } catch (error) {
+        console.error('Error creating game:', error);
+        alert('Error creating game: ' + error.message);
+        // Reset button state on error
+        buttonElement.textContent = originalText;
+        buttonElement.disabled = false;
+      }
+    };
+
+    // Attach to both host buttons
+    $('btnHost').onclick = () => startHosting($('btnHost'));
+    $('btnQuickHost').onclick = () => startHosting($('btnQuickHost'));
     $('btnPlayer').onclick = ()=> setMode('player');
 
-    $('btnCreateGame').onclick = async ()=>{
-      const code = genCode();
-      const game = await db.collection('games').add({
-        code,
-        status: 'lobby', // lobby | active | ended
-        createdAt: nowTs(),
-        currentQId: null,
-        dueAt: null,
-        reveal: false
-      });
-      gameId = game.id;
-      $('hostCode').textContent = code;
-      setMode('host');
-      hostListen(game.id);
-    };
 
     $('btnJoin').onclick = async ()=>{
       const code = $('joinCodeInput').value.trim().toUpperCase();
@@ -352,9 +446,31 @@
       gameUnsub = db.collection('games').doc(gid).onSnapshot(snap=>{
         const g = snap.data();
         $('hostCode').textContent = g.code;
-        $('currentQLabel').textContent = g.currentQId || '—';
-        if (g.dueAt) startCountdown(g.dueAt, ['hostCountdown']); else clearCountdown(['hostCountdown']);
-        if (g.currentQId) renderAnswerBreakdown(gid, g.currentQId);
+        // Show/hide question states based on whether there's an active question
+        if (g.currentQId) {
+          show('activeQuestionState');
+          hide('noQuestionState');
+          $('currentQLabel').textContent = 'Loading...';
+          if (g.dueAt) startCountdown(g.dueAt, ['hostCountdown']); else clearCountdown(['hostCountdown']);
+          
+          // Fetch and display the actual question text
+          qDocRef(gid, g.currentQId).get().then(qSnap => {
+            if (qSnap.exists) {
+              const questionData = qSnap.data();
+              $('currentQLabel').textContent = questionData.text || 'Question not found';
+            } else {
+              $('currentQLabel').textContent = 'Question not found';
+            }
+          }).catch(error => {
+            console.error('Error fetching question:', error);
+            $('currentQLabel').textContent = 'Error loading question';
+          });
+          renderAnswerBreakdown(gid, g.currentQId);
+        } else {
+          show('noQuestionState');
+          hide('activeQuestionState');
+          clearCountdown(['hostCountdown']);
+        }
       });
 
       // Players
@@ -392,7 +508,12 @@
       if (answersUnsub) answersUnsub();
       answersUnsub = qDocRef(gid, qid).collection('answers').onSnapshot(snap=>{
         const counts = [0,0,0,0];
-        snap.forEach(d=>{ const a=d.data(); if (typeof a.choice==='number') counts[a.choice]++; });
+        snap.forEach(d=>{ 
+          const a = d.data(); 
+          if (typeof a.choice==='number') {
+            counts[a.choice]++;
+          }
+        });
         $('answersIn').textContent = snap.size;
         const box = $('answerBreakdown');
         box.innerHTML = '';
@@ -402,6 +523,8 @@
           div.innerHTML = `<div class="text-sm text-white/70">Option ${String.fromCharCode(65+i)}</div><div class="text-2xl font-bold">${c}</div>`;
           box.appendChild(div);
         });
+      }, error => {
+        console.error('Error in answer breakdown listener:', error);
       });
     }
 
@@ -420,20 +543,51 @@
     $('closeModal').onclick = ()=> $('qModal').close();
 
     $('saveQ').onclick = async ()=>{
-      if (!gameId) return;
+      console.log('Save button clicked'); // Debug log
+      
+      if (!gameId) {
+        console.error('No gameId found');
+        alert('Please create a game first before adding questions');
+        return;
+      }
+      
       const text = $('modalQText').value.trim();
       const options = [0,1,2,3].map(i=> $(`opt${i}`).value.trim()).filter(Boolean);
       const correctIndex = parseInt($('correctIdx').value,10);
-      if (!text || options.length<2) return alert('Enter a question and at least two options');
-      const col = db.collection('games').doc(gameId).collection('questions');
-      const idxSnap = await col.get();
-      const index = idxSnap.size; // append
-      const doc = await col.add({ text, options, correctIndex, index, createdAt: nowTs() });
-      $('qModal').close();
-      $('currentQLabel').textContent = doc.id;
+      
+      console.log('Form data:', { text, options, correctIndex }); // Debug log
+      
+      if (!text || options.length<2) {
+        alert('Enter a question and at least two options');
+        return;
+      }
+      
+      // Show loading state
+      const saveBtn = $('saveQ');
+      const originalText = saveBtn.textContent;
+      saveBtn.textContent = 'Saving...';
+      saveBtn.disabled = true;
+      
+      try {
+        const col = db.collection('games').doc(gameId).collection('questions');
+        const idxSnap = await col.get();
+        const index = idxSnap.size; // append
+        const doc = await col.add({ text, options, correctIndex, index, createdAt: nowTs() });
+        console.log('Question saved successfully:', doc.id); // Debug log
+        $('qModal').close();
+        // Don't set currentQLabel here - it will be updated by the game listener
+      } catch (error) {
+        console.error('Error saving question:', error);
+        alert('Error saving question: ' + error.message);
+      } finally {
+        // Reset button state
+        saveBtn.textContent = originalText;
+        saveBtn.disabled = false;
+      }
     };
 
-    $('btnSendQ').onclick = async ()=>{
+    // Shared function for starting/sending questions
+    const startOrSendQuestion = async () => {
       const gid = gameId; if (!gid) return;
       // choose next question (by index > current)
       const gSnap = await db.collection('games').doc(gid).get();
@@ -450,6 +604,9 @@
       const dueAt = firebase.firestore.Timestamp.fromDate(new Date(Date.now() + dueSeconds*1000));
       await db.collection('games').doc(gid).update({ currentQId: next.id, dueAt, reveal:false, status: 'active' });
     };
+
+    $('btnStartGame').onclick = startOrSendQuestion;
+    $('btnSendQ').onclick = startOrSendQuestion;
 
     $('btnReveal').onclick = async ()=>{
       const gid = gameId; if (!gid) return;
